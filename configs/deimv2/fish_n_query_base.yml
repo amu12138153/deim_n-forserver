@@ -1,0 +1,46 @@
+# HGNetv2-N architecture from deimv2_hgnetv2_n_coco.yml, adapted to fish 0/1.
+# Ablations only change DEIMTransformer water switches / selected features.
+__include__:
+  - 'deimv2_hgnetv2_n_coco.yml'
+  - '../dataset/fish_01.yml'
+
+output_dir: ./outputs/fish_n_query
+epoches: 200
+training_protocol:
+  epochs: 200
+  batch_size: 8
+  warmup_epochs: 4
+  augmentation: resize640_horizontal_flip_p05
+
+# Shared schedule: four-epoch linear warmup, then cosine decay to zero.
+# The 197 scheduler steps include the step at the end of warmup epoch 4.
+lrsheduler: ~
+flat_epoch: ~
+no_aug_epoch: ~
+lr_gamma: ~
+warmup_iter: ~
+lr_scheduler:
+  __replace__:
+    type: CosineAnnealingLR
+    T_max: 197
+    eta_min: 0.0
+lr_warmup_scheduler:
+  type: LinearWarmup
+  warmup_duration: 224  # 4 * (448 training images / batch 8)
+
+use_amp: True
+use_ema: True
+
+DEIMCriterion:
+  matcher:
+    matcher_change_epoch: 176  # preserve the original 24-epoch lead to the end
+
+HGNetv2:
+  use_water_quality: False
+
+DEIMTransformer:
+  use_water_quality: False
+  water_features: []
+  water_self_attn: False
+  query_water_cross_attn: False
+  learnable_gate: False

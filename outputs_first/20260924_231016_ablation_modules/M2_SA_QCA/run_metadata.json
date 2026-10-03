@@ -1,0 +1,8 @@
+{
+  "source_config": "C:\\Users\\l\\Desktop\\DEIMv2-main\\configs\\deimv2\\ablation\\M2_SA_QCA.yml",
+  "seed": 0,
+  "extra": [],
+  "test_annotation": "C:\\Users\\l\\Desktop\\fish_dataset622\\test\\coco_detection_test0.json",
+  "test_images": "C:\\Users\\l\\Desktop\\fish_dataset622\\test",
+  "test_sensor_csv": "C:\\Users\\l\\Desktop\\fish_dataset622\\test\\test.csv"
+}

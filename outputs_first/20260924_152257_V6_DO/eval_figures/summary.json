@@ -1,0 +1,112 @@
+{
+  "split": "test",
+  "checkpoint": "C:\\Users\\l\\Desktop\\DEIMv2-main\\outputs\\20260924_152257_V6_DO\\best_stg1.pth",
+  "config": "C:\\Users\\l\\Desktop\\DEIMv2-main\\outputs\\20260924_152257_V6_DO\\config_used.yml",
+  "annotation": "C:\\Users\\l\\Desktop\\fish_dataset622\\test\\coco_detection_test0.json",
+  "image_dir": "C:\\Users\\l\\Desktop\\fish_dataset622\\test",
+  "num_images": 151,
+  "num_gt": 1483,
+  "num_predictions": 45300,
+  "model_complexity": {
+    "Parameters": 1998452,
+    "Parameters_M": 1.998452,
+    "Trainable_Parameters": 1998450,
+    "Trainable_Parameters_M": 1.99845,
+    "Non_trainable_Parameters": 2,
+    "Non_trainable_Parameters_M": 2e-06,
+    "Inference_Parameters": 1990826,
+    "MACs": 2632682640,
+    "GMACs": 2.63268264,
+    "FLOPs": 5318841696,
+    "GFLOPs": 5.318841696,
+    "input_size": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "water_shape": [
+      1,
+      1
+    ],
+    "water_features": [
+      "do"
+    ],
+    "active_fusion_stages": [
+      "decoder"
+    ],
+    "profiler": "calflops with analytical MultiheadAttention subtotals; deployed inference",
+    "FLOPs_convention": "2 FLOPs per MAC plus calflops-counted elementwise ops; MHA projections/QK/AV counted once",
+    "limitations": "Operator-based estimate; MHA softmax/bias and unsupported ops are not counted."
+  },
+  "COCO": {
+    "mAP@0.5": 0.897571,
+    "mAP@0.5:0.95": 0.683685,
+    "AP@0.75": 0.769209
+  },
+  "DetectionMetrics": {
+    "IoU": 0.5,
+    "Confidence": 0.5478830337524414,
+    "TP": 1246,
+    "FP": 145,
+    "FN": 237,
+    "Precision": 0.895758,
+    "Recall": 0.840189,
+    "F1": 0.867084
+  },
+  "BestF1": {
+    "F1": 0.867084,
+    "confidence": 0.547883,
+    "Precision": 0.895758,
+    "Recall": 0.840189
+  },
+  "ConfusionMatrix": {
+    "labels": [
+      "normal",
+      "hypoxia",
+      "background"
+    ],
+    "matrix_pred_rows_true_cols": [
+      [
+        797,
+        55,
+        41
+      ],
+      [
+        26,
+        433,
+        39
+      ],
+      [
+        70,
+        102,
+        0
+      ]
+    ]
+  },
+  "Visualization": {
+    "directory": "C:\\Users\\l\\Desktop\\DEIMv2-main\\outputs\\20260924_152257_V6_DO\\eval_figures\\prediction_images",
+    "saved": 151,
+    "missing": 0,
+    "confidence": 0.5478830337524414
+  },
+  "ErrorAnalysis": {
+    "num_class_mismatch": 81,
+    "num_false_negative": 172,
+    "num_false_positive": 80,
+    "num_suspected_class_label": 25,
+    "num_suspected_box_annotation": 25,
+    "prediction_json": "C:\\Users\\l\\Desktop\\DEIMv2-main\\outputs\\20260924_152257_V6_DO\\eval_figures\\test_predictions.json",
+    "error_report": "C:\\Users\\l\\Desktop\\DEIMv2-main\\outputs\\20260924_152257_V6_DO\\eval_figures\\error_report.csv",
+    "suspected_label_errors": "C:\\Users\\l\\Desktop\\DEIMv2-main\\outputs\\20260924_152257_V6_DO\\eval_figures\\suspected_label_errors.csv",
+    "label_error_conf": 0.8
+  },
+  "Categories": [
+    "normal",
+    "hypoxia"
+  ],
+  "Category_IDs": [
+    0,
+    1
+  ]
+}

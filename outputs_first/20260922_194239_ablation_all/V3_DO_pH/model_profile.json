@@ -1,0 +1,29 @@
+{
+  "Parameters": 1998644,
+  "Parameters_M": 1.998644,
+  "Inference_Parameters": 1991018,
+  "MACs": 2632938048,
+  "GMACs": 2.632938048,
+  "FLOPs": 5319354672,
+  "GFLOPs": 5.319354672,
+  "input_size": [
+    1,
+    3,
+    640,
+    640
+  ],
+  "water_shape": [
+    1,
+    2
+  ],
+  "water_features": [
+    "do",
+    "ph"
+  ],
+  "active_fusion_stages": [
+    "decoder"
+  ],
+  "profiler": "calflops with analytical MultiheadAttention subtotals; deployed inference",
+  "FLOPs_convention": "2 FLOPs per MAC plus calflops-counted elementwise ops; MHA projections/QK/AV counted once",
+  "limitations": "Operator-based estimate; MHA softmax/bias and unsupported ops are not counted."
+}

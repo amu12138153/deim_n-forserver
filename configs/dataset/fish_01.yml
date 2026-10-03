@@ -1,0 +1,62 @@
+# Shared 0=normal, 1=hypoxia dataset for HGNetv2-N ablation/comparison.
+# All variants load the same four CSV columns; individual water ablations
+# select their active columns inside DEIMTransformer.
+num_classes: 2
+remap_mscoco_category: False
+
+train_dataloader:
+  total_batch_size: 8
+  num_workers: 0
+  dataset:
+    img_folder: ./fish_dataset622/train
+    ann_file: ./fish_dataset622/train/coco_detection_train0.json
+    sensor_csv: ./fish_dataset622/train/train.csv
+    use_water_quality: True
+    # The common cross-model policy is fixed 640x640 resize plus p=0.5
+    # horizontal flip. Every source image is already 640x640.
+    transforms:
+      type: Compose
+      ops:
+        - {type: RandomHorizontalFlip, p: 0.5}
+        - {type: Resize, size: [640, 640]}
+        - {type: SanitizeBoundingBoxes, min_size: 1}
+        - {type: ConvertPILImage, dtype: 'float32', scale: True}
+        - {type: ConvertBoxes, fmt: 'cxcywh', normalize: True}
+      policy: ~
+      mosaic_prob: 0.0
+  collate_fn:
+    # Preserve a single water context per image and avoid a late-phase restart.
+    mixup_prob: 0.0
+    copyblend_prob: 0.0
+    stop_epoch: 200
+
+val_dataloader:
+  total_batch_size: 8
+  num_workers: 0
+  dataset:
+    img_folder: ./fish_dataset622/val
+    ann_file: ./fish_dataset622/val/coco_detection_val0.json
+    sensor_csv: ./fish_dataset622/val/val.csv
+    use_water_quality: True
+
+test_dataloader:
+  type: DataLoader
+  total_batch_size: 8
+  shuffle: False
+  num_workers: 0
+  drop_last: False
+  dataset:
+    type: CocoDetection
+    img_folder: ./fish_dataset622/test
+    ann_file: ./fish_dataset622/test/coco_detection_test0.json
+    sensor_csv: ./fish_dataset622/test/test.csv
+    use_water_quality: True
+    return_masks: False
+    transforms:
+      type: Compose
+      ops:
+        - {type: Resize, size: [640, 640]}
+        - {type: ConvertPILImage, dtype: 'float32', scale: True}
+        - {type: ConvertBoxes, fmt: 'cxcywh', normalize: True}
+  collate_fn:
+    type: BatchImageCollateFunction

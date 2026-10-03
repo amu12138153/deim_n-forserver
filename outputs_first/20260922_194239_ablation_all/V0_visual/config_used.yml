@@ -1,0 +1,298 @@
+task: detection
+evaluator:
+  type: CocoEvaluator
+  iou_types:
+  - bbox
+num_classes: 2
+remap_mscoco_category: false
+train_dataloader:
+  type: DataLoader
+  dataset:
+    type: CocoDetection
+    img_folder: C:\Users\l\Desktop\fish_dataset622_oneversion\train
+    ann_file: C:\Users\l\Desktop\fish_dataset622_oneversion\train\coco_detection_train0.json
+    return_masks: false
+    sensor_csv: C:\Users\l\Desktop\fish_dataset622_oneversion\train\train.csv
+    use_water_quality: true
+    transforms:
+      type: Compose
+      ops:
+      - type: Mosaic
+        output_size: 320
+        rotation_range: 10
+        translation_range:
+        - 0.1
+        - 0.1
+        scaling_range:
+        - 0.5
+        - 1.5
+        probability: 0.0
+        fill_value: 0
+        use_cache: true
+        max_cached_images: 50
+        random_pop: true
+      - type: RandomPhotometricDistort
+        p: 0.5
+      - type: RandomZoomOut
+        fill: 0
+      - type: RandomIoUCrop
+        p: 0.8
+      - type: SanitizeBoundingBoxes
+        min_size: 8
+      - type: RandomHorizontalFlip
+      - type: Resize
+        size:
+        - 640
+        - 640
+      - type: SanitizeBoundingBoxes
+        min_size: 8
+      - type: ConvertPILImage
+        dtype: float32
+        scale: true
+      - type: ConvertBoxes
+        fmt: cxcywh
+        normalize: true
+      policy:
+        name: stop_epoch
+        epoch:
+        - 4
+        - 98
+        - 188
+        ops:
+        - Mosaic
+        - RandomPhotometricDistort
+        - RandomZoomOut
+        - RandomIoUCrop
+      mosaic_prob: 0.0
+  shuffle: true
+  num_workers: 0
+  drop_last: true
+  collate_fn:
+    type: BatchImageCollateFunction
+    base_size: 640
+    base_size_repeat: null
+    stop_epoch: 280
+    ema_restart_decay: 0.9999
+    mixup_prob: 0.0
+    mixup_epochs:
+    - 40000
+    - 15000
+    copyblend_prob: 0.0
+    copyblend_epochs:
+    - 40000
+    - 15000
+    area_threshold: 100
+    num_objects: 3
+    with_expand: true
+    expand_ratios:
+    - 0.1
+    - 0.25
+  total_batch_size: 2
+val_dataloader:
+  type: DataLoader
+  dataset:
+    type: CocoDetection
+    img_folder: C:\Users\l\Desktop\fish_dataset622_oneversion\val
+    ann_file: C:\Users\l\Desktop\fish_dataset622_oneversion\val\coco_detection_val0.json
+    sensor_csv: C:\Users\l\Desktop\fish_dataset622_oneversion\val\val.csv
+    use_water_quality: true
+    transforms:
+      type: Compose
+      ops:
+      - type: Resize
+        size:
+        - 640
+        - 640
+      - type: ConvertPILImage
+        dtype: float32
+        scale: true
+      - type: ConvertBoxes
+        fmt: cxcywh
+        normalize: true
+  shuffle: false
+  num_workers: 0
+  drop_last: false
+  collate_fn:
+    type: BatchImageCollateFunction
+  total_batch_size: 2
+print_freq: 500
+output_dir: C:\Users\l\Desktop\DEIMv2-main\outputs\20260922_194239_ablation_all\V0_visual
+checkpoint_freq: 5
+sync_bn: true
+find_unused_parameters: true
+use_amp: true
+scaler:
+  type: GradScaler
+  enabled: true
+use_ema: true
+ema:
+  type: ModelEMA
+  decay: 0.9999
+  warmups: 1000
+  start: 0
+model: DEIM
+criterion: DEIMCriterion
+postprocessor: PostProcessor
+use_focal_loss: true
+eval_spatial_size:
+- 640
+- 640
+DEIM:
+  backbone: HGNetv2
+  encoder: LiteEncoder
+  decoder: DEIMTransformer
+HGNetv2:
+  name: Pico
+  return_idx:
+  - 2
+  freeze_at: -1
+  freeze_stem_only: true
+  freeze_norm: false
+  pretrained: false
+  local_model_dir: ./weight/hgnetv2/
+  use_lab: true
+  use_water_quality: false
+  water_fuse_idx: 2
+  agg: se
+HybridEncoder:
+  in_channels:
+  - 512
+  - 1024
+  - 2048
+  feat_strides:
+  - 8
+  - 16
+  - 32
+  hidden_dim: 256
+  use_encoder_idx:
+  - 2
+  num_encoder_layers: 1
+  nhead: 8
+  dim_feedforward: 1024
+  dropout: 0.0
+  enc_act: gelu
+  expansion: 1.0
+  depth_mult: 1
+  act: silu
+  version: deim
+  csp_type: csp2
+  fuse_op: sum
+DEIMTransformer:
+  feat_channels:
+  - 112
+  - 112
+  feat_strides:
+  - 16
+  - 32
+  hidden_dim: 112
+  num_levels: 2
+  num_layers: 3
+  eval_idx: -1
+  num_queries: 200
+  num_denoising: 100
+  label_noise_ratio: 0.5
+  box_noise_scale: 1.0
+  reg_max: 32
+  reg_scale: 4
+  layer_scale: 1
+  num_points:
+  - 4
+  - 2
+  cross_attn_method: default
+  query_select_method: default
+  activation: silu
+  mlp_act: silu
+  dim_feedforward: 320
+  water_features: []
+  water_means:
+  - 27.878
+  - 4.547
+  - 8.069
+  - 0.125
+  water_stds:
+  - 0.673
+  - 1.939
+  - 0.229
+  - 0.914
+  water_self_attn: false
+  query_water_cross_attn: false
+  learnable_gate: false
+  use_water_quality: false
+  share_bbox_head: true
+  use_gateway: false
+PostProcessor:
+  num_top_queries: 300
+epoches: 200
+lrsheduler: flatcosine
+lr_gamma: 0.5
+warmup_iter: 2000
+flat_epoch: 98
+no_aug_epoch: 12
+DEIMCriterion:
+  weight_dict:
+    loss_mal: 1
+    loss_bbox: 5
+    loss_giou: 2
+    loss_fgl: 0.15
+    loss_ddf: 1.5
+  losses:
+  - mal
+  - boxes
+  - local
+  gamma: 1.5
+  alpha: 0.75
+  reg_max: 32
+  matcher:
+    type: HungarianMatcher
+    weight_dict:
+      cost_class: 2
+      cost_bbox: 5
+      cost_giou: 2
+    alpha: 0.25
+    gamma: 2.0
+    change_matcher: true
+    iou_order_alpha: 4.0
+    matcher_change_epoch: 5400
+  use_uni_set: false
+clip_max_norm: 0.1
+optimizer:
+  type: AdamW
+  params:
+  - params: ^(?=.*backbone)(?!.*water)(?!.*(?:norm|bn)).*$
+    lr: 0.0001
+  - params: ^(?=.*backbone)(?!.*water)(?=.*(?:norm|bn)).*$
+    lr: 0.0001
+    weight_decay: 0.0
+  - params: ^(?:encoder|decoder)\.(?!.*water).*(?:norm|bn|bias).*$
+    lr: 0.0001
+    weight_decay: 0.0
+  - params: ^(?=.*water)(?!.*(?:norm|bn|bias|scale|gamma)).*$
+    lr: 0.0001
+  - params: ^(?=.*water)(?=.*(?:norm|bn|bias|scale|gamma)).*$
+    lr: 0.0001
+    weight_decay: 0.0
+  lr: 0.0002
+  betas:
+  - 0.9
+  - 0.999
+  weight_decay: 0.0001
+lr_scheduler:
+  type: MultiStepLR
+  milestones:
+  - 500
+  gamma: 0.1
+lr_warmup_scheduler:
+  type: LinearWarmup
+  warmup_duration: 500
+LiteEncoder:
+  in_channels:
+  - 512
+  feat_strides:
+  - 16
+  use_water_quality: false
+  hidden_dim: 112
+  expansion: 0.34
+  depth_mult: 0.5
+  act: silu
+experiment_name: V0_visual
+seed: 0

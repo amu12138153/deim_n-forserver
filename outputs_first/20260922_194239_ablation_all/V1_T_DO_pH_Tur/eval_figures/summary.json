@@ -1,0 +1,115 @@
+{
+  "split": "test",
+  "checkpoint": "C:\\Users\\l\\Desktop\\DEIMv2-main\\outputs\\20260922_194239_ablation_all\\V1_T_DO_pH_Tur\\best_stg1.pth",
+  "config": "C:\\Users\\l\\Desktop\\DEIMv2-main\\outputs\\20260922_194239_ablation_all\\V1_T_DO_pH_Tur\\config_used.yml",
+  "annotation": "C:\\Users\\l\\Desktop\\fish_dataset622\\test\\coco_detection_test0.json",
+  "image_dir": "C:\\Users\\l\\Desktop\\fish_dataset622\\test",
+  "num_images": 151,
+  "num_gt": 1483,
+  "num_predictions": 45300,
+  "model_complexity": {
+    "Parameters": 1999028,
+    "Parameters_M": 1.999028,
+    "Trainable_Parameters": 1999026,
+    "Trainable_Parameters_M": 1.999026,
+    "Non_trainable_Parameters": 2,
+    "Non_trainable_Parameters_M": 2e-06,
+    "Inference_Parameters": 1991402,
+    "MACs": 2633451168,
+    "GMACs": 2.633451168,
+    "FLOPs": 5320385232,
+    "GFLOPs": 5.320385232,
+    "input_size": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "water_shape": [
+      1,
+      4
+    ],
+    "water_features": [
+      "temperature",
+      "do",
+      "ph",
+      "turbidity"
+    ],
+    "active_fusion_stages": [
+      "decoder"
+    ],
+    "profiler": "calflops with analytical MultiheadAttention subtotals; deployed inference",
+    "FLOPs_convention": "2 FLOPs per MAC plus calflops-counted elementwise ops; MHA projections/QK/AV counted once",
+    "limitations": "Operator-based estimate; MHA softmax/bias and unsupported ops are not counted."
+  },
+  "COCO": {
+    "mAP@0.5": 0.894513,
+    "mAP@0.5:0.95": 0.683325,
+    "AP@0.75": 0.77004
+  },
+  "DetectionMetrics": {
+    "IoU": 0.5,
+    "Confidence": 0.5462046265602112,
+    "TP": 1249,
+    "FP": 176,
+    "FN": 234,
+    "Precision": 0.876491,
+    "Recall": 0.842212,
+    "F1": 0.85901
+  },
+  "BestF1": {
+    "F1": 0.85901,
+    "confidence": 0.546205,
+    "Precision": 0.876491,
+    "Recall": 0.842212
+  },
+  "ConfusionMatrix": {
+    "labels": [
+      "normal",
+      "hypoxia",
+      "background"
+    ],
+    "matrix_pred_rows_true_cols": [
+      [
+        803,
+        55,
+        60
+      ],
+      [
+        32,
+        430,
+        45
+      ],
+      [
+        58,
+        105,
+        0
+      ]
+    ]
+  },
+  "Visualization": {
+    "directory": "C:\\Users\\l\\Desktop\\DEIMv2-main\\outputs\\20260922_194239_ablation_all\\V1_T_DO_pH_Tur\\eval_figures\\prediction_images",
+    "saved": 151,
+    "missing": 0,
+    "confidence": 0.5462046265602112
+  },
+  "ErrorAnalysis": {
+    "num_class_mismatch": 87,
+    "num_false_negative": 163,
+    "num_false_positive": 105,
+    "num_suspected_class_label": 32,
+    "num_suspected_box_annotation": 21,
+    "prediction_json": "C:\\Users\\l\\Desktop\\DEIMv2-main\\outputs\\20260922_194239_ablation_all\\V1_T_DO_pH_Tur\\eval_figures\\test_predictions.json",
+    "error_report": "C:\\Users\\l\\Desktop\\DEIMv2-main\\outputs\\20260922_194239_ablation_all\\V1_T_DO_pH_Tur\\eval_figures\\error_report.csv",
+    "suspected_label_errors": "C:\\Users\\l\\Desktop\\DEIMv2-main\\outputs\\20260922_194239_ablation_all\\V1_T_DO_pH_Tur\\eval_figures\\suspected_label_errors.csv",
+    "label_error_conf": 0.8
+  },
+  "Categories": [
+    "normal",
+    "hypoxia"
+  ],
+  "Category_IDs": [
+    0,
+    1
+  ]
+}

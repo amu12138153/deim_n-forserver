@@ -1,0 +1,272 @@
+{
+  "version": "4.0.1",
+  "flags": {},
+  "checked": false,
+  "shapes": [
+    {
+      "label": "hypoxia",
+      "score": 0.8346410393714905,
+      "points": [
+        [
+          406.364990234375,
+          315.75946044921875
+        ],
+        [
+          466.36328125,
+          315.75946044921875
+        ],
+        [
+          466.36328125,
+          379.15032958984375
+        ],
+        [
+          406.364990234375,
+          379.15032958984375
+        ]
+      ],
+      "group_id": null,
+      "description": null,
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    },
+    {
+      "label": "hypoxia",
+      "score": 0.8236247301101685,
+      "points": [
+        [
+          352.6212463378906,
+          319.91583251953125
+        ],
+        [
+          405.6896057128906,
+          319.91583251953125
+        ],
+        [
+          405.6896057128906,
+          368.80133056640625
+        ],
+        [
+          352.6212463378906,
+          368.80133056640625
+        ]
+      ],
+      "group_id": null,
+      "description": null,
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    },
+    {
+      "label": "hypoxia",
+      "score": 0.7834933996200562,
+      "points": [
+        [
+          469.1348973607038,
+          316.6715542521994
+        ],
+        [
+          516.8768328445748,
+          316.6715542521994
+        ],
+        [
+          516.8768328445748,
+          375.791788856305
+        ],
+        [
+          469.1348973607038,
+          375.791788856305
+        ]
+      ],
+      "group_id": null,
+      "description": null,
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    },
+    {
+      "label": "hypoxia",
+      "score": 0.7810277342796326,
+      "points": [
+        [
+          450.2044677734375,
+          320.346923828125
+        ],
+        [
+          490.8017578125,
+          320.346923828125
+        ],
+        [
+          490.8017578125,
+          362.1787109375
+        ],
+        [
+          450.2044677734375,
+          362.1787109375
+        ]
+      ],
+      "group_id": null,
+      "description": null,
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    },
+    {
+      "label": "hypoxia",
+      "score": 0.7797895669937134,
+      "points": [
+        [
+          388.9827880859375,
+          318.6707763671875
+        ],
+        [
+          433.359130859375,
+          318.6707763671875
+        ],
+        [
+          433.359130859375,
+          357.0252685546875
+        ],
+        [
+          388.9827880859375,
+          357.0252685546875
+        ]
+      ],
+      "group_id": null,
+      "description": null,
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    },
+    {
+      "label": "normal",
+      "score": 0.7733985781669617,
+      "points": [
+        [
+          292.7787610619469,
+          532.7433628318583
+        ],
+        [
+          314.25689697265625,
+          532.7433628318583
+        ],
+        [
+          314.25689697265625,
+          558.162841796875
+        ],
+        [
+          292.7787610619469,
+          558.162841796875
+        ]
+      ],
+      "group_id": null,
+      "description": null,
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    },
+    {
+      "label": "hypoxia",
+      "score": null,
+      "points": [
+        [
+          210.86387434554976,
+          356.41361256544496
+        ],
+        [
+          256.3089005235602,
+          356.41361256544496
+        ],
+        [
+          256.3089005235602,
+          385.5235602094241
+        ],
+        [
+          210.86387434554976,
+          385.5235602094241
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    },
+    {
+      "label": "hypoxia",
+      "score": null,
+      "points": [
+        [
+          486.73020527859234,
+          319.8387096774194
+        ],
+        [
+          528.3724340175953,
+          319.8387096774194
+        ],
+        [
+          528.3724340175953,
+          373.09384164222877
+        ],
+        [
+          486.73020527859234,
+          373.09384164222877
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    },
+    {
+      "label": "hypoxia",
+      "score": null,
+      "points": [
+        [
+          487.1994134897361,
+          348.92961876832845
+        ],
+        [
+          556.1730205278592,
+          348.92961876832845
+        ],
+        [
+          556.1730205278592,
+          384.00293255131965
+        ],
+        [
+          487.1994134897361,
+          384.00293255131965
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    }
+  ],
+  "imagePath": "20260807_043103_545.jpg",
+  "imageData": null,
+  "imageHeight": 640,
+  "imageWidth": 640
+}

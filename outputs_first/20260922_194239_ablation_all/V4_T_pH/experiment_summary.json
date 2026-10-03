@@ -1,0 +1,35 @@
+{
+  "experiment_name": "V4_T_pH",
+  "use_water_quality": true,
+  "water_features": [
+    "temperature",
+    "ph"
+  ],
+  "water_self_attn": true,
+  "query_water_cross_attn": true,
+  "learnable_gate": true,
+  "best_checkpoint": "C:\\Users\\l\\Desktop\\DEIMv2-main\\outputs\\20260922_194239_ablation_all\\V4_T_pH\\best_stg1.pth",
+  "split": "test",
+  "annotation": "C:\\Users\\l\\Desktop\\fish_dataset622\\test\\coco_detection_test0.json",
+  "config": "C:\\Users\\l\\Desktop\\DEIMv2-main\\outputs\\20260922_194239_ablation_all\\V4_T_pH\\config_used.yml",
+  "mAP@0.5": 0.8916360744051807,
+  "mAP@0.5:0.95": 0.674337976111241,
+  "AP@0.75": 0.7606913686235789,
+  "Precision": 0.8392156862745098,
+  "Recall": 0.8658125421443021,
+  "F1": 0.8523066710919351,
+  "Best Confidence": 0.4478144943714142,
+  "Parameters": 1998644,
+  "Parameters_M": 1.998644,
+  "MACs": 2632938048,
+  "GMACs": 2.632938048,
+  "FLOPs": 5319354672,
+  "GFLOPs": 5.319354672,
+  "metric_definitions": {
+    "epoch_F1": "det_engine COCO precision-envelope Max F1 at IoU=0.5",
+    "final_PRF1": "Original eval_curves pooled confidence sweep, then calculate_prf1 at best confidence, IoU=0.5",
+    "mAP": "COCOeval bbox stats[1], stats[0], stats[2]",
+    "checkpoint_selection": "Validation mAP@0.5:0.95; test metrics never select checkpoint",
+    "FLOPs": "2 FLOPs per MAC plus calflops-counted elementwise ops; MHA projections/QK/AV counted once"
+  }
+}

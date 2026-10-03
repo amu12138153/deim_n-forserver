@@ -1,0 +1,3 @@
+__include__: ['../fish_n_query_base.yml']
+experiment_name: V0_visual
+output_dir: ./outputs/fish_n_query/V0_visual

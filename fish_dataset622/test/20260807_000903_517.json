@@ -1,0 +1,302 @@
+{
+  "version": "4.0.1",
+  "flags": {},
+  "checked": false,
+  "shapes": [
+    {
+      "label": "normal",
+      "score": 0.9345351457595825,
+      "points": [
+        [
+          309.39162723552835,
+          486.4580003451048
+        ],
+        [
+          354.0617322159971,
+          486.4580003451048
+        ],
+        [
+          354.0617322159971,
+          513.6762620638547
+        ],
+        [
+          309.39162723552835,
+          513.6762620638547
+        ]
+      ],
+      "group_id": null,
+      "description": null,
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    },
+    {
+      "label": "hypoxia",
+      "score": 0.9005589485168457,
+      "points": [
+        [
+          201.79693603515625,
+          323.8870544433594
+        ],
+        [
+          228.2271728515625,
+          323.8870544433594
+        ],
+        [
+          228.2271728515625,
+          361.8600158691406
+        ],
+        [
+          201.79693603515625,
+          361.8600158691406
+        ]
+      ],
+      "group_id": null,
+      "description": null,
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    },
+    {
+      "label": "normal",
+      "score": 0.894469141960144,
+      "points": [
+        [
+          430.247802734375,
+          493.1890869140625
+        ],
+        [
+          477.3515625,
+          493.1890869140625
+        ],
+        [
+          477.3515625,
+          516.376220703125
+        ],
+        [
+          430.247802734375,
+          516.376220703125
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    },
+    {
+      "label": "normal",
+      "score": 0.8931863307952881,
+      "points": [
+        [
+          171.3417721518987,
+          517.3670886075948
+        ],
+        [
+          209.87791442871094,
+          517.3670886075948
+        ],
+        [
+          209.87791442871094,
+          541.7801513671875
+        ],
+        [
+          171.3417721518987,
+          541.7801513671875
+        ]
+      ],
+      "group_id": null,
+      "description": null,
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    },
+    {
+      "label": "hypoxia",
+      "score": 0.8408201932907104,
+      "points": [
+        [
+          330.18048095703125,
+          323.55548095703125
+        ],
+        [
+          383.51702880859375,
+          323.55548095703125
+        ],
+        [
+          383.51702880859375,
+          377.21319580078125
+        ],
+        [
+          330.18048095703125,
+          377.21319580078125
+        ]
+      ],
+      "group_id": null,
+      "description": null,
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    },
+    {
+      "label": "hypoxia",
+      "score": 0.7836551070213318,
+      "points": [
+        [
+          495.58721923828125,
+          321.4029541015625
+        ],
+        [
+          521.304443359375,
+          321.4029541015625
+        ],
+        [
+          521.304443359375,
+          375.6656494140625
+        ],
+        [
+          495.58721923828125,
+          375.6656494140625
+        ]
+      ],
+      "group_id": null,
+      "description": null,
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    },
+    {
+      "label": "hypoxia",
+      "score": 0.7060631513595581,
+      "points": [
+        [
+          141.23345947265625,
+          341.0074462890625
+        ],
+        [
+          188.89105224609375,
+          341.0074462890625
+        ],
+        [
+          188.89105224609375,
+          385.731201171875
+        ],
+        [
+          141.23345947265625,
+          385.731201171875
+        ]
+      ],
+      "group_id": null,
+      "description": null,
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    },
+    {
+      "label": "hypoxia",
+      "score": null,
+      "points": [
+        [
+          177.02586206896552,
+          325.73275862068965
+        ],
+        [
+          218.23275862068968,
+          325.73275862068965
+        ],
+        [
+          218.23275862068968,
+          367.1120689655172
+        ],
+        [
+          177.02586206896552,
+          367.1120689655172
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    },
+    {
+      "label": "hypoxia",
+      "score": null,
+      "points": [
+        [
+          270.2155172413793,
+          333.6637931034483
+        ],
+        [
+          302.6293103448276,
+          333.6637931034483
+        ],
+        [
+          302.6293103448276,
+          357.4568965517241
+        ],
+        [
+          270.2155172413793,
+          357.4568965517241
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    },
+    {
+      "label": "hypoxia",
+      "score": null,
+      "points": [
+        [
+          523.4482758620691,
+          321.2931034482759
+        ],
+        [
+          567.2413793103449,
+          321.2931034482759
+        ],
+        [
+          567.2413793103449,
+          360.7758620689655
+        ],
+        [
+          523.4482758620691,
+          360.7758620689655
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    }
+  ],
+  "imagePath": "20260807_000903_517.jpg",
+  "imageData": null,
+  "imageHeight": 640,
+  "imageWidth": 640,
+  "description": ""
+}
