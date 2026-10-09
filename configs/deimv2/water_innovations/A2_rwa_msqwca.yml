@@ -1,0 +1,6 @@
+__include__: [base.yml]
+experiment_name: A2_rwa_msqwca
+output_dir: ./outputs/water_innovations/A2_rwa_msqwca
+DEIMTransformer:
+  use_rwa: True
+  use_msqwca: True

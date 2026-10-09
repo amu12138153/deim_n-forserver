@@ -131,8 +131,8 @@ ax.text(45, 50.5, "C3: 512 × 40 × 40  ·  stride 16", fontsize=7.7,
         color=MUTED, ha="center")
 
 # Water enters the stage-3 feature, not the object query.
-node(ax, 45, 92.1, 16.4, 6.5, "Water parameters\nT · DO · pH · Turbidity", PURPLE, 7.7, "bold")
-node(ax, 64, 92.1, 14.0, 6.5, "WaterTokenEncoder\n4 × 64 tokens", PURPLE, 7.7, "bold")
+node(ax, 45, 92.1, 16.4, 6.5, "Water parameters\nT · DO · pH", PURPLE, 7.7, "bold")
+node(ax, 64, 92.1, 14.0, 6.5, "WaterTokenEncoder\n3 × 64 tokens", PURPLE, 7.7, "bold")
 route(ax, [(61.4, 95.35), (64, 95.35)])
 route(ax, [(71, 92.1), (71, 86.0), (57, 86.0), (57, 59.7)],
       label="water K/V", label_xy=(64, 86.9), lw=0.95)

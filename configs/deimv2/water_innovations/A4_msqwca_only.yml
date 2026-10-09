@@ -1,0 +1,5 @@
+__include__: [base.yml]
+experiment_name: A4_msqwca_only
+output_dir: ./outputs/water_innovations/A4_msqwca_only
+DEIMTransformer:
+  use_msqwca: True

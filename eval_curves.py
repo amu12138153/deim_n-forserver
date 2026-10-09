@@ -390,6 +390,11 @@ def load_everything(args):
     elif args.sensor_csv:
         cfg.yaml_cfg['val_dataloader']['dataset']['sensor_csv'] = args.sensor_csv
 
+    if args.split == 'test':
+        from dataset_preflight import validate_coco_images
+        test_dataset = cfg.yaml_cfg['val_dataloader']['dataset']
+        validate_coco_images(test_dataset['ann_file'], test_dataset['img_folder'])
+
     # --------------------------------------------------------
     # checkpoint
     # --------------------------------------------------------
@@ -2804,6 +2809,12 @@ def main():
         'use_water_quality': bool(decoder.use_water_quality),
         'water_features': decoder.water_features,
         'water_self_attn': decoder.water_self_attn,
+        'use_rwa': decoder.use_rwa,
+        'use_msqwca': decoder.use_msqwca,
+        'query_water_fusion_type': 'GlobalSparseQueryWaterCrossAttention' if decoder.use_msqwca else 'MultiheadAttention' if decoder.query_water_cross_attn else None,
+        'sparse_k': decoder.decoder.layers[0].water_fusion.cross_attn.sparse_k if decoder.use_msqwca else None,
+        'use_cqwg': decoder.use_cqwg,
+        'water_fusion_diagnostics': decoder.water_fusion_diagnostics(),
         'query_water_cross_attn': decoder.query_water_cross_attn,
         'learnable_gate': decoder.learnable_gate,
         'best_checkpoint': os.path.abspath(args.resume),

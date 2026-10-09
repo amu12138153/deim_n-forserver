@@ -9,14 +9,16 @@ import sys
 
 HERE = Path(__file__).resolve().parent
 GROUPS = {
-    'variables': ['V0_visual', 'V1_T_DO_pH_Tur', 'V2_T_DO_pH', 'V3_DO_pH', 'V4_T_pH', 'V5_T_DO', 'V6_DO'],
+    'variables': ['V0_visual', 'V2_T_DO_pH', 'V3_DO_pH', 'V4_T_pH', 'V5_T_DO', 'V6_DO'],
     'modules': ['M0_visual', 'M1_QCA', 'M2_SA_QCA', 'M3_QCA_Gate', 'M4_full'],
+    'innovations': ['A0_baseline', 'A1_rwa', 'A2_rwa_msqwca', 'A3_full', 'A4_msqwca_only', 'A5_cqwg_only', 'A6_visual'],
 }
 
 
 def summarize(paths, output):
     fields = ['experiment', 'water_features', 'water_self_attn', 'query_water_cross_attn',
-              'learnable_gate', 'Precision', 'Recall', 'F1', 'mAP50', 'mAP50_95', 'AP75', 'Params_M', 'GFLOPs']
+              'learnable_gate', 'use_rwa', 'use_msqwca', 'use_cqwg', 'query_water_fusion_type', 'sparse_k',
+              'Precision', 'Recall', 'F1', 'mAP50', 'mAP50_95', 'AP75', 'Params_M', 'GFLOPs']
     aliases = {'experiment': 'experiment_name', 'mAP50': 'mAP@0.5', 'mAP50_95': 'mAP@0.5:0.95',
                'AP75': 'AP@0.75', 'Params_M': 'Parameters_M'}
     output = Path(output)
@@ -26,7 +28,10 @@ def summarize(paths, output):
         writer.writeheader()
         for path in paths:
             summary = json.loads(Path(path).read_text(encoding='utf-8'))
-            row = {key: summary[aliases.get(key, key)] for key in fields}
+            optional = {'use_rwa':False, 'use_msqwca':False, 'use_cqwg':False,
+                        'query_water_fusion_type':None, 'sparse_k':None}
+            row = {key: summary.get(key, optional[key]) if key in optional
+                   else summary[aliases.get(key, key)] for key in fields}
             row['water_features'] = '+'.join(row['water_features'])
             writer.writerow(row)
     print(f'Saved: {output}')
@@ -35,9 +40,10 @@ def summarize(paths, output):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--group', choices=[*GROUPS, 'all'], default='variables')
-    parser.add_argument('--root', default=None, help='Batch output directory')
-    parser.add_argument('--config-dir', default='configs/deimv2/ablation_n',
-                        help='Ablation YAML directory; use configs/deimv2/ablation for the historical Pico suite')
+    parser.add_argument('--root', '--output-root', dest='root', default=None,
+                        help='Batch output directory (one subdirectory per experiment)')
+    parser.add_argument('--config-dir', default=None,
+                        help='Override YAML directory; innovations default to water_innovations, others to ablation_n')
     parser.add_argument('--summary-only', action='store_true', help='Collect existing summaries under --root')
     parser.add_argument('--include-v6', action='store_true', help='Deprecated: V6 is now included by default')
     parser.add_argument('--only', nargs='+', choices=sum(GROUPS.values(), []),
@@ -57,7 +63,7 @@ def main():
     if args.batch_size is not None and args.batch_size < 1:
         parser.error('--batch-size must be positive')
     root = Path(args.root or HERE / 'outputs' / f'{datetime.datetime.now():%Y%m%d_%H%M%S}_ablation_n_query_{args.group}').resolve()
-    config_dir = Path(args.config_dir)
+    config_dir = Path(args.config_dir or 'configs/deimv2/ablation_n')
     if not config_dir.is_absolute():
         config_dir = HERE / config_dir
     config_dir = config_dir.resolve()
@@ -90,8 +96,10 @@ def main():
         if name in completed:
             print(f'Skipping completed experiment: {name}', flush=True)
             continue
+        selected_config_dir = (HERE / 'configs/deimv2/water_innovations'
+                               if not args.config_dir and name in GROUPS['innovations'] else config_dir)
         cmd = [sys.executable, str(HERE / 'run_experiment.py'),
-               '-c', str(config_dir / f'{name}.yml'),
+               '-c', str(selected_config_dir / f'{name}.yml'),
                '--name', name, '--dir', str(root / name), '--seed', str(args.seed), '--nproc', str(args.nproc)]
         if args.batch_size is not None:
             cmd += ['--batch-size', str(args.batch_size)]

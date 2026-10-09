@@ -1,0 +1,29 @@
+{
+  "model": {
+    "family": "deim",
+    "display_name": "DEIMv2-HGNetv2-N",
+    "checkpoint": "C:\\Users\\l\\Desktop\\deimn2\\deimv2_n.pth",
+    "config": "C:\\Users\\l\\Desktop\\DEIMv2-main\\configs\\deimv2\\ablation_n\\M0_visual.yml",
+    "reference_summary": null,
+    "cam_layer": "auto",
+    "name": "deimv2_n",
+    "family_source": "config"
+  },
+  "ann_file": "C:\\Users\\l\\Desktop\\DEIMv2-main\\fish_dataset622\\test\\coco_detection_test0.json",
+  "image_dir": "C:\\Users\\l\\Desktop\\DEIMv2-main\\fish_dataset622\\test",
+  "sensor_csv": "C:\\Users\\l\\Desktop\\DEIMv2-main\\fish_dataset622\\test\\test.csv",
+  "image_size": 640,
+  "image_ids": [
+    7,
+    138,
+    150,
+    40
+  ],
+  "device": "cuda:0",
+  "cam_topk": 10,
+  "metric_tolerance": 1e-05,
+  "out": "C:\\Users\\l\\Desktop\\DEIMv2-main\\heatmap\\deimv2_n",
+  "list_layers": false,
+  "cpu_threads": 4,
+  "hide_labels": false
+}

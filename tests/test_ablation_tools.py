@@ -25,7 +25,7 @@ class AblationToolsTests(unittest.TestCase):
     def test_all_ablation_group_contains_complete_variable_series(self):
         self.assertEqual(
             run_ablation.GROUPS['variables'],
-            ['V0_visual', 'V1_T_DO_pH_Tur', 'V2_T_DO_pH', 'V3_DO_pH',
+            ['V0_visual', 'V2_T_DO_pH', 'V3_DO_pH',
              'V4_T_pH', 'V5_T_DO', 'V6_DO'],
         )
 
@@ -44,7 +44,7 @@ class AblationToolsTests(unittest.TestCase):
                     'AP@0.75': .7, 'Parameters_M': 2., 'GFLOPs': 5.,
                 }), encoding='utf-8')
 
-            for name in run_ablation.GROUPS['variables'][:5]:
+            for name in run_ablation.GROUPS['variables'][:-2]:
                 write_summary(name)
             calls = []
 
@@ -83,10 +83,11 @@ class AblationToolsTests(unittest.TestCase):
             root = Path(tmp)
             out = root / 'experiment'
             config = root / 'source.yml'
-            (root / 'test.json').write_text('{}', encoding='utf-8')
+            (root / 'test.json').write_text('{"images": []}', encoding='utf-8')
             (root / 'val.json').write_text('{"split":"val"}', encoding='utf-8')
             config.write_text(yaml.safe_dump({'experiment_name':'M4_full',
-                'val_dataloader': {'dataset':{'use_water_quality':False, 'ann_file':str(root / 'val.json')}},
+                'val_dataloader': {'dataset':{'use_water_quality':False, 'ann_file':str(root / 'val.json'),
+                                                'img_folder':str(root)}},
                 'test_dataloader': {'dataset':{'ann_file':str(root / 'test.json'),
                                                  'img_folder':str(root), 'use_water_quality':False}}}), encoding='utf-8')
             commands = []
@@ -138,7 +139,7 @@ class AblationToolsTests(unittest.TestCase):
         model = YAMLConfig(str(ROOT/'configs/deimv2/ablation/M4_full.yml')).model.eval()
         state = {name:value.clone() for name,value in model.state_dict().items()}
         result = profile_model(model)
-        self.assertEqual(result['water_shape'],[1,4])
+        self.assertEqual(result['water_shape'],[1,3])
         self.assertEqual(result['water_features'], ['temperature', 'do', 'ph'])
         self.assertGreater(result['FLOPs'],2*result['MACs'])
         self.assertEqual(list(state),list(model.state_dict()))

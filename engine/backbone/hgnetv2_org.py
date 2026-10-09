@@ -157,7 +157,7 @@ class StemBlock(nn.Module):
             mid_chs // 2,
             mid_chs,
             kernel_size=2,
-            stride=1,
+            stride=1, 
             use_lab=use_lab,
             act=act,
         )
@@ -630,7 +630,14 @@ class HGNetv2(nn.Module):
             if idx in self.return_idx:
                 outs.append(x)
         return outs
-    #"stage1": [16, 16, 64, 1, False, False, 3, 3],
-      #          "stage2": [64, 32, 256, 1, True, False, 3, 3],
-       #         "stage3": [256, 64, 512, 2, True, True, 5, 3],
-        #        "stage4": [512, 128, 1024, 1, True, True, 5, 3],
+        # 'B0': {
+        #             'stem_channels': [3, 16, 16],
+        #             'stage_config': {
+        #                 # in_channels, mid_channels, out_channels, num_blocks, downsample, light_block, kernel_size, layer_num
+        #                 "stage1": [16, 16, 64, 1, False, False, 3, 3],
+        #                 "stage2": [64, 32, 256, 1, True, False, 3, 3],
+        #                 "stage3": [256, 64, 512, 2, True, True, 5, 3],
+        #                 "stage4": [512, 128, 1024, 1, True, True, 5, 3],
+        #             },
+        #             'url': 'https://github.com/Peterande/storage/releases/download/dfinev1.0/PPHGNetV2_B0_stage1.pth'
+        #         },

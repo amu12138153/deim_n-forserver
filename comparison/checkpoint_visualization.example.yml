@@ -1,0 +1,76 @@
+# Fill checkpoint/config with the latest files on the computer doing inference.
+# Paths are relative to this YAML file; absolute paths also work.
+# config is optional for every model; supplied files define the model structure.
+# Omitted config uses structure/configuration stored in the checkpoint.
+# Actual config determines the loader independently of the displayed model name.
+# reference_summary may point to that run's metrics.json/experiment_summary.json.
+# python may specify another environment's executable for a particular model.
+# No checkpoint is inferred from the local historical outputs.
+models:
+  deimv2_n:
+    family: deim
+    display_name: DEIMv2-HGNetv2-N
+    checkpoint: 'C:\Users\l\Desktop\deimn2\deimv2_n.pth'
+    config: 'C:\Users\l\Desktop\DEIMv2-main\configs\deimv2\ablation_n\M0_visual.yml'
+    reference_summary: null
+    cam_layer: auto
+  dfine_n:
+    family: dfine
+    display_name: D-FINE-N
+    checkpoint: C:\Users\l\Desktop\deimn第三版mid\dfine_n.pth
+    config: configs/visualization_dfine_n_fish.yml
+    repo_workdir: ../D-FINE
+    reference_summary: null
+    cam_layer: auto
+  dfine_s:
+    family: dfine
+    display_name: D-FINE-S
+    checkpoint: C:\Users\l\Desktop\deimn第三版mid\V2_T_DO_pH.pth
+    config:  C:\Users\l\Desktop\DEIMv2-main\D-FINE\configs\dfine\dfine_hgnetv2_s_coco.yml
+    repo_workdir: ../D-FINE
+    reference_summary: null
+    cam_layer: auto
+  ours:
+    family: deim
+    display_name: Ours
+    checkpoint: C:\Users\l\Desktop\deimn第三版mid\yolo26n.pt
+    config: null
+    reference_summary: null
+    cam_layer: auto
+  rtdetr_r18:
+    family: rtdetr
+    display_name: RT-DETR-R18
+    checkpoint: C:\Users\l\Desktop\deimn第三版mid\rtdetr_r18.pth
+    config: C:\Users\l\Desktop\DEIMv2-main\RT-DETR\rtdetr_pytorch\configs\rtdetr\rtdetr_r18vd_6x_coco.yml
+    repo_workdir: ../RT-DETR/rtdetrv2_pytorch
+    reference_summary: null
+    cam_layer: auto
+  rtdetrv2_s:
+    family: rtdetrv2
+    display_name: RT-DETRv2-S
+    checkpoint: C:\Users\l\Desktop\deimn第三版mid\rtdetrv2_s.pth
+    config: C:\Users\l\Desktop\DEIMv2-main\RT-DETR\rtdetrv2_pytorch\configs\rtdetrv2\rtdetrv2_r18vd_120e_coco.yml
+    repo_workdir: ../RT-DETR/rtdetrv2_pytorch
+    reference_summary: null
+    cam_layer: auto
+  yolo11n:
+    family: yolo
+    display_name: YOLO11n
+    config: C:\Users\l\Desktop\DEIMv2-main\configs\deimv2\ablation_n\M2_SA_QCA.yml
+    checkpoint: C:\Users\l\Desktop\deimn第三版mid\M2_SA_QCA.pth
+    reference_summary: null
+    cam_layer: auto
+  yolo26n:
+    family: yolo
+    display_name: YOLO26n
+    config: C:\Users\l\Desktop\DEIMv2-main\configs\deimv2\ablation_n\M3_QCA_Gate.yml
+    checkpoint: C:\Users\l\Desktop\deimn第三版mid\M3_QCA_Gate.pth
+    reference_summary: null
+    cam_layer: auto
+  yolov8n:
+    family: yolo
+    display_name: YOLOv8n
+    config: C:\Users\l\Desktop\DEIMv2-main\configs\deimv2\ablation_n\V4_T_pH.yml
+    checkpoint: C:\Users\l\Desktop\deimn第三版mid\V4_T_pH.pth
+    reference_summary: null
+    cam_layer: auto

@@ -9,6 +9,8 @@ python comparison/run_comparison.py --all --train --eval --profile
 
 消融输出在 `outputs/<时间>_ablation_n_query_all/`，自动生成每项的 `experiment_summary.json` 和总表 `ablation_summary.csv`。对比输出在 `comparison_outputs/fish_n_query_200e_common_aug/`，总表是 `comparison_results.csv`。若需重跑对比，指定新的 `--output-root`；单项失败可用 `--model <模型键>` 在新目录补跑。
 
+消融实验也可用 `--output-root` 指定整个批次的目录，例如 `python run_ablation.py --group all --output-root /data/fish_ablation_200e`。原有的 `--root` 参数仍可使用；每个实验写入该目录下自己的子目录。命令行输出目录会覆盖单个实验 YML 中的 `output_dir`。
+
 ## 基线与融合位置
 
 所有 DEIM 消融配置继承 [原始 N 配置](../configs/deimv2/deimv2_hgnetv2_n_coco.yml) 和 [鱼数据集配置](../configs/dataset/fish_01.yml)，保留 HGNetv2-B0、`return_idx=[2,3]`、HybridEncoder 的 2 个特征层和 128 维隐藏层、3 层 DEIM decoder。训练 200 轮，batch=8，输入 640×640，使用本地 `weight/hgnetv2/PPHGNetV2_B0_stage1.pth` backbone 预训练。

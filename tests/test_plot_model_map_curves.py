@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from plot_model_map_curves import find_history, load_jsonl, load_yolo_csv, with_gaps
+from plot_model_map_curves import find_history, load_explicit_history, load_jsonl, load_yolo_csv, with_gaps
 
 
 class ModelMapCurveTests(unittest.TestCase):
@@ -33,6 +33,19 @@ class ModelMapCurveTests(unittest.TestCase):
                 writer.writerow(("epoch", "metrics/mAP50(B)", "metrics/mAP50-95(B)"))
                 writer.writerow((1, 0.6, 0.3))
             self.assertEqual(load_yolo_csv(path, "yolov8n").points, ((1, 0.6, 0.3),))
+
+    def test_explicit_named_logs_accept_txt_and_csv(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            deim = root / "V0_visual.txt"
+            deim.write_text(json.dumps({"epoch": 0, "test_map_50": 0.4,
+                                        "test_map_50_95": 0.2}), encoding="utf-8")
+            yolo = root / "results.csv"
+            yolo.write_text("epoch,metrics/mAP50(B),metrics/mAP50-95(B)\n1,0.6,0.3\n",
+                            encoding="utf-8")
+            self.assertEqual(load_explicit_history(str(deim)).name, "V0_visual")
+            self.assertEqual(load_explicit_history(f"yolov8n={yolo}").points,
+                             ((1, 0.6, 0.3),))
 
     def test_selected_model_must_have_unambiguous_log(self):
         with tempfile.TemporaryDirectory() as directory:

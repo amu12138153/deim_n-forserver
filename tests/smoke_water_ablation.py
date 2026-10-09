@@ -16,12 +16,12 @@ from get_info_param_and_flops import profile_model
 
 
 def unit_checks():
-    raw = torch.tensor([[27.8, 4.1, 8.05, 0.12], [float('nan'), 5., 8., 0.]])
+    raw = torch.tensor([[27.8, 4.1, 8.05], [float('nan'), 5., 8.]])
     encoder = WaterTokenEncoder(water_features=['do', 'ph'])
     assert encoder.param_embedding.shape == (2, 64)
     torch.testing.assert_close(encoder.mean, torch.tensor([4.547, 8.069]))
     torch.testing.assert_close(encoder.std, torch.tensor([1.939, 0.229]))
-    torch.testing.assert_close(encoder(raw), encoder(raw[:, [1, 2]]))
+    torch.testing.assert_close(encoder.select_features(raw), raw[:, [1, 2]])
     assert torch.isfinite(encoder(raw)).all()
     for features in ([], ['do', 'do'], ['invalid']):
         try:
@@ -30,9 +30,9 @@ def unit_checks():
             pass
         else:
             raise AssertionError(f'Accepted invalid features: {features}')
-    custom = WaterTokenEncoder(water_features=['ph', 'temperature'], means=[1,2,3,4], stds=[1,2,3,4])
+    custom = WaterTokenEncoder(water_features=['ph', 'temperature'], means=[1,2,3], stds=[1,2,3])
     torch.testing.assert_close(custom.mean, torch.tensor([3.,1.]))
-    torch.testing.assert_close(custom(raw), custom(raw[:, [2, 0]]))
+    torch.testing.assert_close(custom.select_features(raw), raw[:, [2, 0]])
     for sa in (False, True):
         for gate in (False, True):
             fusion = WaterAwareQueryCrossAttention(water_features=['do', 'ph'], water_self_attn=sa, learnable_gate=gate)
@@ -97,7 +97,7 @@ def main():
         model = cfg.model.to(args.device).eval()
         image = torch.randn(1, 3, 640, 640, device=args.device)
         n = len(model.decoder.water_features)
-        water = torch.tensor([[27.8,4.1,8.05,.12]],device=args.device) if n else None
+        water = torch.tensor([[27.8,4.1,8.05]],device=args.device) if n else None
         for layer in model.decoder.decoder.layers:
             if hasattr(layer, 'water_fusion'):
                 layer.water_fusion.save_attention = True
@@ -109,7 +109,7 @@ def main():
         if n:
             for layer in model.decoder.decoder.layers:
                 fusion = layer.water_fusion
-                encoder = fusion.water_encoder
+                encoder = model.decoder.water_encoder
                 assert encoder.select_features(water).shape == (1, n)
                 assert encoder(water).shape == (1, n, 64)
                 assert fusion.last_query_water_attn.shape == (1, 200, n)
@@ -136,7 +136,7 @@ def main():
         row = {'experiment': path.stem, 'water_tokens': n, 'loss': float(loss.detach()), 'passed': True}
         if args.profile:
             row['profile'] = profile_model(model, device=args.device)
-            assert row['profile']['water_shape'] == ([1,n] if n else None)
+            assert row['profile']['water_shape'] == ([1,3] if n else None)
             assert row['profile']['MACs'] > 0 and row['profile']['FLOPs'] > 0
         results.append(row)
         print(f'PASS {path.stem}: tokens={n}, forward/backward/optimizer/attention/profile',flush=True)

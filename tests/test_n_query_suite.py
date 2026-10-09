@@ -20,7 +20,7 @@ class NQuerySuite(unittest.TestCase):
     def test_all_configs_share_the_n_backbone_data_and_schedule(self):
         configs = {
             name: load_config(str(ROOT / "configs/deimv2/ablation_n" / f"{name}.yml"), {})
-            for name in sum(GROUPS.values(), [])
+            for name in GROUPS['variables'] + GROUPS['modules']
         }
         reference = copy.deepcopy(configs["M4_full"])
         for name, config in configs.items():
@@ -59,9 +59,9 @@ class NQuerySuite(unittest.TestCase):
                 config = load_config(str(ROOT / "configs/deimv2/ablation_n" / f"{name}.yml"), {})
                 self.assertEqual(config["DEIMTransformer"]["water_features"],
                                  ["temperature", "do", "ph"])
-        four = load_config(str(ROOT / "configs/deimv2/ablation_n/V1_T_DO_pH_Tur.yml"), {})
-        self.assertEqual(four["DEIMTransformer"]["water_features"],
-                         ["temperature", "do", "ph", "turbidity"])
+        for name in GROUPS['variables'][1:]:
+            config = load_config(str(ROOT / 'configs/deimv2/ablation_n' / f'{name}.yml'), {})
+            self.assertTrue(set(config['DEIMTransformer']['water_features']).issubset({'temperature','do','ph'}))
 
     def test_test_annotations_and_sensors_are_aligned(self):
         datasets = {}
@@ -84,6 +84,7 @@ class NQuerySuite(unittest.TestCase):
     def test_augmented_image_keeps_its_own_sensor_reading(self):
         dataset = YAMLConfig(str(ROOT / "configs/deimv2/ablation_n/M4_full.yml")).train_dataloader.dataset
         expected_water = dataset.get_water_quality(0)
+        self.assertEqual(tuple(expected_water.shape), (3,))
         for epoch in (0, 4, 100, 188, 199):
             with self.subTest(epoch=epoch):
                 dataset.set_epoch(epoch)

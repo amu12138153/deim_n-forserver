@@ -1,0 +1,6 @@
+__include__: [A3_full.yml]
+experiment_name: A3_full_sparse1
+output_dir: ./outputs/water_innovations/A3_full_sparse1
+DEIMTransformer:
+  query_water_fusion:
+    sparse_k: 1

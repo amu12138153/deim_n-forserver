@@ -1,0 +1,132 @@
+{
+  "model": {
+    "family": "deim",
+    "display_name": "DEIMv2-HGNetv2-N",
+    "checkpoint": "C:\\Users\\l\\Desktop\\deimn2\\deimv2_n.pth",
+    "config": "C:\\Users\\l\\Desktop\\DEIMv2-main\\heatmap\\deimv2_n\\effective_model_config.yml",
+    "reference_summary": null,
+    "cam_layer": "auto",
+    "name": "deimv2_n",
+    "family_source": "config",
+    "config_source": "explicit",
+    "source_config": "C:\\Users\\l\\Desktop\\DEIMv2-main\\configs\\deimv2\\ablation_n\\M0_visual.yml"
+  },
+  "checkpoint_sha256": "29f06002775c0abf7cbac8fe2a9721919bc04179858cef3aeb2d321cbf2cc332",
+  "annotation_sha256": "a61f1220f2ff3feca4779d21d5c870ad471f410a280ea7e0dbf237c7cde787a7",
+  "method": "Grad-CAM: ReLU of feature channels weighted by spatially averaged score gradients",
+  "cam_layer": "encoder.pan_blocks.0.cv4.conv",
+  "cam_target": "top 10 confidence-passing class scores before NMS/query postprocessing",
+  "cam_normalization": "independent 0\u20131 normalization per image; relative activation, not comparable absolute confidence",
+  "detection_colors": "class-colored predictions; no TP/FP/FN or metric text drawn",
+  "operating_threshold": 0.7123629450798035,
+  "reference_check": {
+    "status": "not_provided"
+  },
+  "images": [
+    {
+      "image_id": 7,
+      "file_name": "20260806_102803_428.jpg",
+      "image_metrics": {
+        "TP": 7,
+        "FP": 1,
+        "FN": 3,
+        "Precision": 0.875,
+        "Recall": 0.7,
+        "F1": 0.7777777777777778
+      },
+      "cam": {
+        "status": "ok",
+        "target_scores": [
+          0.9661614894866943,
+          0.9654518961906433,
+          0.9577965140342712,
+          0.9566720724105835,
+          0.9543495178222656,
+          0.9426315426826477,
+          0.909816563129425,
+          0.9046932458877563
+        ],
+        "raw_max": 0.00011799539788626134
+      }
+    },
+    {
+      "image_id": 138,
+      "file_name": "20260807_063703_554.jpg",
+      "image_metrics": {
+        "TP": 6,
+        "FP": 0,
+        "FN": 3,
+        "Precision": 1.0,
+        "Recall": 0.6666666666666666,
+        "F1": 0.8
+      },
+      "cam": {
+        "status": "ok",
+        "target_scores": [
+          0.973704993724823,
+          0.9732518792152405,
+          0.9725216627120972,
+          0.956835150718689,
+          0.9535403251647949,
+          0.9456731677055359
+        ],
+        "raw_max": 5.760044223279692e-05
+      }
+    },
+    {
+      "image_id": 150,
+      "file_name": "20260807_073903_561.jpg",
+      "image_metrics": {
+        "TP": 8,
+        "FP": 1,
+        "FN": 3,
+        "Precision": 0.8888888888888888,
+        "Recall": 0.7272727272727273,
+        "F1": 0.8
+      },
+      "cam": {
+        "status": "ok",
+        "target_scores": [
+          0.9803919196128845,
+          0.9743437767028809,
+          0.9711965322494507,
+          0.9705612063407898,
+          0.9663495421409607,
+          0.9589012265205383,
+          0.9569950699806213,
+          0.9522226452827454,
+          0.9097790718078613
+        ],
+        "raw_max": 0.00018870463827624917
+      }
+    },
+    {
+      "image_id": 40,
+      "file_name": "20260806_135503_459.jpg",
+      "image_metrics": {
+        "TP": 10,
+        "FP": 1,
+        "FN": 1,
+        "Precision": 0.9090909090909091,
+        "Recall": 0.9090909090909091,
+        "F1": 0.9090909090909091
+      },
+      "cam": {
+        "status": "ok",
+        "target_scores": [
+          0.9757559299468994,
+          0.974131166934967,
+          0.9723674058914185,
+          0.9678776264190674,
+          0.9607629776000977,
+          0.9282963871955872,
+          0.9030146598815918,
+          0.8728904128074646,
+          0.8636094331741333,
+          0.789482831954956
+        ],
+        "raw_max": 0.0010630947072058916
+      }
+    }
+  ]
+}

@@ -54,7 +54,7 @@ class TransformerDecoderLayer(nn.Module):
         if self.use_water_quality and self.query_water_cross_attn:
             options = dict(water_options or {})
             options.pop("query_water_cross_attn", None)
-            self.water_fusion = WaterAwareQueryCrossAttention(query_dim=d_model, **options)
+            self.water_fusion = WaterAwareQueryFusion(query_dim=d_model, **options)
         # self attention
         self.self_attn = nn.MultiheadAttention(d_model, n_head, dropout=dropout, batch_first=True)
         self.dropout1 = nn.Dropout(dropout)
@@ -272,6 +272,16 @@ class DEIMTransformer(nn.Module):
                  water_self_attn=True,
                  query_water_cross_attn=True,
                  learnable_gate=True,
+                 water_num_params=3,
+                 water_dim=64,
+                 use_rwa=False,
+                 use_msqwca=False,
+                 use_cqwg=False,
+                 water_relation=None,
+                 query_water_fusion=None,
+                 query_water_gate=None,
+                 water_debug=False,
+                 water_legacy_init_scale=0.0,
                  ):
         super().__init__()
         assert len(feat_channels) <= num_levels
@@ -281,20 +291,35 @@ class DEIMTransformer(nn.Module):
             feat_strides.append(feat_strides[-1] * 2)
 
         self.hidden_dim = hidden_dim
+        if water_num_params != 3:
+            raise ValueError('Raw water_num_params must be 3: temperature, do, ph')
+        if any((use_rwa, use_msqwca, use_cqwg)) and not (use_water_quality and query_water_cross_attn):
+            raise ValueError('Water innovations require use_water_quality and query_water_cross_attn')
         self.use_water_quality = use_water_quality
         self.water_features = validate_water_features(water_features) if use_water_quality else []
-        self.water_self_attn = bool(water_self_attn and use_water_quality and query_water_cross_attn)
+        if (use_rwa or use_msqwca) and self.water_features != list(WATER_FEATURES):
+            raise ValueError('RWA/GSQWCA require temperature, do, ph tokens in that order')
+        self.water_num_params, self.water_dim = water_num_params, water_dim
+        self.use_rwa, self.use_msqwca, self.use_cqwg = bool(use_rwa), bool(use_msqwca), bool(use_cqwg)
+        self.water_self_attn = bool(water_self_attn and use_water_quality and query_water_cross_attn and not use_rwa)
         self.query_water_cross_attn = bool(query_water_cross_attn and use_water_quality)
         self.learnable_gate = bool(learnable_gate and self.query_water_cross_attn)
-        water_options = dict(water_features=self.water_features,
-                             water_means=water_means, water_stds=water_stds,
-                             water_self_attn=self.water_self_attn,
+        water_options = dict(water_dim=water_dim,
                              query_water_cross_attn=self.query_water_cross_attn,
-                             learnable_gate=self.learnable_gate)
+                             learnable_gate=self.learnable_gate,
+                             init_scale=water_legacy_init_scale,
+                             use_msqwca=self.use_msqwca, use_cqwg=self.use_cqwg,
+                             query_water_fusion=query_water_fusion, query_water_gate=query_water_gate,
+                             debug=water_debug)
+        if self.query_water_cross_attn:
+            self.water_encoder = WaterTokenEncoder(embed_dim=water_dim, water_features=self.water_features,
+                means=water_means, stds=water_stds, water_self_attn=self.water_self_attn,
+                use_rwa=self.use_rwa, water_relation=water_relation, debug=water_debug)
         print(f"Water features: {', '.join(self.water_features) or 'visual only'}\n"
               f"Water Self-Attention: {self.water_self_attn}\n"
               f"Query-Water Cross-Attention: {self.query_water_cross_attn}\n"
-              f"Learnable Gate: {self.learnable_gate}")
+              f"Learnable Gate: {self.learnable_gate}\n"
+              f"RWA/GSQWCA/CQWG: {self.use_rwa}/{self.use_msqwca}/{self.use_cqwg}")
         scaled_dim = round(layer_scale*hidden_dim)
         self.nhead = nhead
         self.feat_strides = feat_strides
@@ -557,6 +582,12 @@ class DEIMTransformer(nn.Module):
         return topk_memory, topk_logits, topk_anchors
 
     def forward(self, feats, targets=None,water=None):
+        # Encode water once per image; all decoder layers share the resulting tokens.
+        water_tokens = None
+        if self.query_water_cross_attn and water is not None:
+            self.water_encoder.save_attention = any(
+                layer.water_fusion.save_attention for layer in self.decoder.layers if hasattr(layer, 'water_fusion'))
+            water_tokens = self.water_encoder(water)
         # input projection and embedding
         memory, spatial_shapes = self._get_encoder_input(feats)
 
@@ -593,7 +624,7 @@ class DEIMTransformer(nn.Module):
             self.reg_scale,
             attn_mask=attn_mask,
             dn_meta=dn_meta,
-            water=water)
+            water=water_tokens)
 
         if self.training and dn_meta is not None:
             # the output from the first decoder layer, only one
@@ -626,6 +657,38 @@ class DEIMTransformer(nn.Module):
                 out['dn_meta'] = dn_meta
 
         return out
+
+    def water_fusion_diagnostics(self):
+        """Call after a captured forward to inspect learned scales and vector gates."""
+        result = {'water_features': self.water_features, 'raw_water_shape': ['B', 3],
+                  'use_rwa': self.use_rwa, 'use_msqwca': self.use_msqwca, 'use_cqwg': self.use_cqwg,
+                  'layers': []}
+        if self.use_rwa:
+            relation = self.water_encoder.relation
+            result['rwa_alpha'] = float(relation.alpha.detach().cpu())
+            result['rank_stats'] = None if relation.last_rank_stats is None else relation.last_rank_stats.tolist()
+            result['effective_rank'] = None if relation.last_effective_rank is None else relation.last_effective_rank.tolist()
+        for index, layer in enumerate(self.decoder.layers):
+            if not hasattr(layer, 'water_fusion'):
+                continue
+            fusion = layer.water_fusion
+            row = {'layer': index}
+            if fusion.use_msqwca:
+                cross = fusion.cross_attn
+                weights = cross.last_branch_weights
+                row['query_water_fusion_type'] = 'GlobalSparseQueryWaterCrossAttention'
+                row['branch_order'] = ['global', 'sparse']
+                row['sparse_k'] = cross.sparse_k
+                row['branch_weights_shape'] = None if weights is None else list(weights.shape)
+                row['mean_branch_weights'] = None if weights is None else weights.float().mean((0, 1)).tolist()
+                row['sparse_selection_frequency'] = None if cross.last_sparse_mask is None else cross.last_sparse_mask.float().mean((0, 1, 2)).tolist()
+            if fusion.use_cqwg:
+                row['lambda_gate'] = float(fusion.gate.lambda_gate.detach().cpu())
+                row['mean_gate'] = None if fusion.gate.last_gate_mean is None else float(fusion.gate.last_gate_mean)
+            else:
+                row['attn_scale'], row['ffn_scale'] = float(fusion.attn_scale), float(fusion.ffn_scale)
+            result['layers'].append(row)
+        return result
 
 
     @torch.jit.unused

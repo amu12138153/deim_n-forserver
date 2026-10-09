@@ -1,0 +1,30 @@
+{
+  "model": {
+    "family": "dfine",
+    "display_name": "D-FINE-N",
+    "checkpoint": "C:\\Users\\l\\Desktop\\deimn\u7b2c\u4e09\u7248mid\\deimv2_n.pth",
+    "config": "C:\\Users\\l\\Desktop\\DEIMv2-main\\D-FINE\\configs\\dfine\\dfine_hgnetv2_n_coco.yml",
+    "repo_workdir": "C:\\Users\\l\\Desktop\\DEIMv2-main\\D-FINE",
+    "reference_summary": null,
+    "cam_layer": "auto",
+    "name": "dfine_n",
+    "family_source": "config"
+  },
+  "ann_file": "C:\\Users\\l\\Desktop\\DEIMv2-main\\fish_dataset622\\test\\coco_detection_test0.json",
+  "image_dir": "C:\\Users\\l\\Desktop\\DEIMv2-main\\fish_dataset622\\test",
+  "sensor_csv": "C:\\Users\\l\\Desktop\\DEIMv2-main\\fish_dataset622\\test\\test.csv",
+  "image_size": 640,
+  "image_ids": [
+    7,
+    138,
+    150,
+    40
+  ],
+  "device": "cuda:0",
+  "cam_topk": 10,
+  "metric_tolerance": 1e-05,
+  "out": "C:\\Users\\l\\Desktop\\DEIMv2-main\\heatmap\\dfine_n",
+  "list_layers": false,
+  "cpu_threads": 4,
+  "hide_labels": false
+}

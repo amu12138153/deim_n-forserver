@@ -14,7 +14,7 @@ from torchvision.transforms.functional import pil_to_tensor
 from engine.core import YAMLConfig
 from engine.mynewblock.WaterQueryCrossAttention import WATER_FEATURES
 
-LABELS = {'temperature': 'Temperature', 'do': 'DO', 'ph': 'pH', 'turbidity': 'Turbidity'}
+LABELS = {'temperature': 'Temperature', 'do': 'DO', 'ph': 'pH'}
 
 
 def heatmap(matrix, columns, rows, title, xlabel, ylabel, out):
@@ -40,7 +40,7 @@ def main():
     parser.add_argument('-r', '--resume', required=True)
     parser.add_argument('--image', required=True)
     parser.add_argument('--water', required=True, nargs='+', type=float,
-                        help='N values in water_features order (four values use raw sensor order)')
+                        help='Three raw values in fixed temperature, do, ph order')
     parser.add_argument('--layer', default='last', help='last, all, or zero-based index')
     parser.add_argument('--topk', type=int, default=10)
     parser.add_argument('--device', default='cuda' if torch.cuda.is_available() else 'cpu')
@@ -54,8 +54,8 @@ def main():
     if not decoder.query_water_cross_attn:
         parser.error('This configuration has no active Query-Water Cross-Attention')
     n = len(decoder.water_features)
-    if len(args.water) not in (n, len(WATER_FEATURES)):
-        parser.error(f'--water needs {n} selected values or 4 raw values')
+    if len(args.water) != len(WATER_FEATURES):
+        parser.error('--water requires exactly temperature, do, ph values')
     checkpoint = torch.load(args.resume, map_location='cpu', weights_only=False)
     state = checkpoint['ema']['module'] if checkpoint.get('ema') is not None else checkpoint['model']
     model.load_state_dict(state, strict=True)
@@ -86,7 +86,7 @@ def main():
         for index, module in zip(indices, modules):
             out = root / f'layer_{index}' if args.layer == 'all' else root
             out.mkdir(parents=True, exist_ok=True)
-            self_attn = module.water_encoder.last_water_self_attn
+            self_attn = decoder.water_encoder.last_water_self_attn
             cross_attn = module.last_query_water_attn
             if cross_attn is None:
                 raise RuntimeError(f'Layer {index} was not executed')
@@ -107,17 +107,48 @@ def main():
                 'top_query_indices': top_indices.tolist(), 'top_query_confidences': scores[top_indices.to(scores.device)].cpu().tolist(),
                 'water_self_attention': None if self_attn is None else self_attn[0].tolist(),
                 'query_water_attention': cross.tolist(), 'topk_mean_attention': selected.mean(axis=0).tolist(),
-                'attn_scale': float(module.attn_scale), 'ffn_scale': float(module.ffn_scale),
+                'fusion_diagnostics': decoder.water_fusion_diagnostics(),
                 'definition': 'Head-averaged attention weights for one image, not causal feature importance; gated residual strength is recorded separately.',
             }
+            if module.use_msqwca:
+                attention_module = module.cross_attn
+                global_attention = attention_module.last_global_attention[0].numpy()
+                sparse_attention = attention_module.last_sparse_attention[0].numpy()
+                branch_weights = attention_module.last_branch_weights[0].numpy()
+                # Head averaging can make all three sparse attention columns nonzero.
+                # Export the actual per-head selection mask for frequency analysis.
+                sparse_mask = attention_module.last_sparse_mask[0]
+                heatmap(global_attention[top_indices.numpy()], columns, rows,
+                        'GSQWCA Global Water Attention', 'Water Variable', 'Top-K Object Query',
+                        out / 'query_water_global_attention.png')
+                heatmap(sparse_attention[top_indices.numpy()], columns, rows,
+                        'GSQWCA Sparse Water Attention', 'Water Variable', 'Top-K Object Query',
+                        out / 'query_water_sparse_attention.png')
+                heatmap(branch_weights[top_indices.numpy()], ['Global', 'Sparse'], rows,
+                        'Query-Adaptive Branch Weights', 'Branch', 'Top-K Object Query',
+                        out / 'query_water_branch_weights.png')
+                metadata.update({
+                    'query_water_fusion_type': 'GlobalSparseQueryWaterCrossAttention',
+                    'sparse_k': attention_module.sparse_k,
+                    'branch_order': ['global', 'sparse'],
+                    'global_attention': global_attention.tolist(),
+                    'sparse_attention': sparse_attention.tolist(),
+                    'branch_weights': branch_weights.tolist(),
+                    'sparse_selection_mask': sparse_mask.tolist(),
+                    'sparse_selection_fraction_per_query': sparse_mask.float().mean(0).tolist(),
+                    'query_predicted_labels': probabilities.argmax(-1).cpu().tolist(),
+                    'query_confidences': scores.cpu().tolist(),
+                    'query_label_definition': 'Predicted class IDs from the final decoder; not ground-truth Normal/Hypoxia labels.',
+                    'query_alignment': 'Intermediate-layer indices align to final predictions by query index; these are unfiltered object queries, not IoU-matched detections.',
+                })
             (out / 'attention_data.json').write_text(json.dumps(metadata, indent=2), encoding='utf-8')
             print(f'Saved layer {index}: {out}')
     finally:
         for module in modules:
             module.save_attention = False
             module.last_query_water_attn = None
-            module.water_encoder.save_attention = False
-            module.water_encoder.last_water_self_attn = None
+        decoder.water_encoder.save_attention = False
+        decoder.water_encoder.last_water_self_attn = None
 
 
 if __name__ == '__main__':

@@ -1,0 +1,21 @@
+{
+  "Precision": 0.9213724088634739,
+  "Recall": 0.8738983050847458,
+  "F1": 0.8970076548364649,
+  "Best_Confidence": 0.7123629450798035,
+  "TP": 1289,
+  "FP": 110,
+  "FN": 186,
+  "mAP50": 0.8862144019408111,
+  "mAP50_95": 0.6709109078215273,
+  "AP75": 0.7530865353054221,
+  "test_annotation": "C:\\Users\\l\\Desktop\\DEIMv2-main\\fish_dataset622\\test\\coco_detection_test0.json",
+  "test_annotation_sha256": "a61f1220f2ff3feca4779d21d5c870ad471f410a280ea7e0dbf237c7cde787a7",
+  "images": 151,
+  "predictions": 45300,
+  "evaluator": "faster_coco_eval COCOeval bbox",
+  "prf1_definition": "IoU=0.5, confidence sweep over unique scores, class-aware greedy one-to-one matching; ignore crowd/ignored GT",
+  "checkpoint": "C:\\Users\\l\\Desktop\\deimn2\\deimv2_n.pth",
+  "checkpoint_sha256": "29f06002775c0abf7cbac8fe2a9721919bc04179858cef3aeb2d321cbf2cc332",
+  "predictions_sha256": "9147d8310cd00dadc4c1c5e8ed9d90407e78c9d2af8b9a2776b8dfadf52a2415"
+}

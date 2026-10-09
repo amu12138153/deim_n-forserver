@@ -1,5 +1,6 @@
 """Fast contract tests; run with python -m unittest discover -s comparison."""
 import json
+import shutil
 import sys
 import tempfile
 import unittest
@@ -204,6 +205,14 @@ class ComparisonContracts(unittest.TestCase):
                 tokens = (root / "out" / "labels" / split / "fish.txt").read_text().split()
                 self.assertEqual(int(tokens[0]), 1)
                 self.assertEqual([float(x) for x in tokens[1:]], [0.3, 0.25, 0.4, 0.3])
+            self.assertEqual(convert(config, root / "out"), root / "out" / "fish.yaml")
+            other_root = root / "other_dataset"
+            for split in ("train", "val", "test"):
+                shutil.copytree(root / split, other_root / split)
+            other_config = {**config, "data_root": other_root}
+            with self.assertRaisesRegex(FileExistsError, "does not match the selected dataset"):
+                convert(other_config, root / "out")
+            self.assertTrue(convert(other_config, root / "new_out").is_file())
 
     def test_train_only_conversion_without_test_annotation(self):
         with tempfile.TemporaryDirectory() as temp:

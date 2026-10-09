@@ -1,0 +1,18 @@
+[
+  {
+    "model": "baseline",
+    "source": "C:\\Users\\l\\Desktop\\DEIMv2-main\\logs\\baseline.txt",
+    "sha256": "deade6f7586073f1057000beae0cb76f82b7484faf5b993036353479656c559e",
+    "points": 200,
+    "first_epoch": 1,
+    "last_epoch": 200
+  },
+  {
+    "model": "dfine_n",
+    "source": "C:\\Users\\l\\Desktop\\DEIMv2-main\\logs\\dfine_n.txt",
+    "sha256": "a4449439fbee2c76b489eeb55a629741cbfa4ae267d5c5a621daafd7e48136bb",
+    "points": 200,
+    "first_epoch": 1,
+    "last_epoch": 200
+  }
+]

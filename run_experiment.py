@@ -8,6 +8,8 @@ from pathlib import Path
 import subprocess
 import sys
 
+from dataset_preflight import validate_coco_images
+
 HERE = Path(__file__).resolve().parent
 
 
@@ -111,7 +113,10 @@ def main():
                 raise ValueError(f'test_dataloader.dataset.{key} is required')
             if value and not (HERE / value).exists():
                 raise FileNotFoundError(f'test_dataloader.dataset.{key}: {HERE / value}')
-    test_annotation = Path(args.test_ann).resolve() if args.test_ann else HERE / test_dataset.get('ann_file', '')
+    test_images = Path(args.test_images).resolve() if args.test_images else HERE / test_dataset['img_folder']
+    test_annotation = Path(args.test_ann).resolve() if args.test_ann else HERE / test_dataset['ann_file']
+    val_images = HERE / cfg['val_dataloader']['dataset']['img_folder']
+    validate_coco_images(test_annotation, test_images, val_image_dir=val_images)
     val_annotation = HERE / cfg['val_dataloader']['dataset']['ann_file']
     if test_annotation.is_file() and val_annotation.is_file():
         test_hash = hashlib.sha256(test_annotation.read_bytes()).digest()

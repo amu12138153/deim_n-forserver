@@ -44,14 +44,13 @@ class CocoDetection(torchvision.datasets.CocoDetection, DetDataset):
         if self.use_water_quality and sensor_csv is not None:
             with open(self.sensor_csv, 'r', encoding='utf-8-sig') as f:
                 reader = csv.DictReader(f)
+                required = {'file_name', 'temperature', 'do', 'ph'}
+                if not required.issubset(reader.fieldnames or []):
+                    raise ValueError(f'Sensor CSV requires columns {sorted(required)}: {self.sensor_csv}')
                 for row in reader:
                     file_name = os.path.basename(row["file_name"]) #是双引号
-                    self.water_dict[file_name] = [
-                        float(row["temperature"]),
-                        float(row["do"]),
-                        float(row["ph"]),
-                        float(row["turbidity"])
-                    ]
+                    self.water_dict[file_name] = [float(row[name]) if (row.get(name) or '').strip() else float('nan')
+                                                  for name in ('temperature', 'do', 'ph')]
 
     def get_water_quality(self, idx):
         image_id = self.ids[idx]
@@ -60,7 +59,7 @@ class CocoDetection(torchvision.datasets.CocoDetection, DetDataset):
         values = self.water_dict.get(file_name,None)
         if values is None:
             # 缺失时返回NaN，模型端经 nan_to_num 后等价于按均值填充
-            values = [float("nan")] * 4
+            values = [float("nan")] * 3
         return torch.tensor(values, dtype=torch.float32)     
 
     def __getitem__(self, idx):

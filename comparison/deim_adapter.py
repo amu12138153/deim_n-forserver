@@ -11,18 +11,18 @@ from common import ROOT, read_coco
 sys.path.insert(0, str(ROOT))
 
 
-def load(config_path, checkpoint, ann_file, image_dir, device):
+def load(config_path, checkpoint, ann_file, image_dir, device, sensor_csv=None):
     from eval_curves import load_everything
     args = SimpleNamespace(config=str(config_path), resume=str(checkpoint), split="test",
                            ann_file=str(ann_file), image_dir=str(image_dir),
-                           sensor_csv=str(Path(image_dir) / "test.csv"), device=device)
+                           sensor_csv=str(sensor_csv or Path(image_dir) / "test.csv"), device=device)
     return load_everything(args)
 
 
-def predict(config_path, checkpoint, ann_file, image_dir, output_json, device="cuda"):
+def predict(config_path, checkpoint, ann_file, image_dir, output_json, device="cuda", sensor_csv=None):
     from eval_curves import collect_predictions
     (_, model, post, loader, _, category_ids, id2gt, _, resolved_ann) = load(
-        config_path, checkpoint, ann_file, image_dir, device)
+        config_path, checkpoint, ann_file, image_dir, device, sensor_csv)
     if Path(resolved_ann).resolve() != Path(ann_file).resolve():
         raise ValueError("DEIM loader did not use the requested test annotation")
     all_preds, _ = collect_predictions(model, post, loader, torch.device(device), id2gt)

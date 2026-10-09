@@ -1,0 +1,7 @@
+__include__: [base.yml]
+experiment_name: A3_full
+output_dir: ./outputs/water_innovations/A3_full
+DEIMTransformer:
+  use_rwa: True
+  use_msqwca: True
+  use_cqwg: True

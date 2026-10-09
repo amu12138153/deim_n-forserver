@@ -1,0 +1,5 @@
+# D-FINE-N architecture with the two classes stored in the fish checkpoint.
+__include__:
+  - ../../D-FINE/configs/dfine/dfine_hgnetv2_n_coco.yml
+num_classes: 2
+remap_mscoco_category: False

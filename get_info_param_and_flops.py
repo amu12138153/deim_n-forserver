@@ -31,11 +31,8 @@ class ModelForFlops(nn.Module):
     def forward(self, images):
         water = None
         if self.use_water:
-            # Other existing fusion locations still consume the four raw columns.
-            features = self.water_features
-            if self.water_flags['backbone'] or self.water_flags['encoder'] or len(features) == 4:
-                features = WATER_FEATURES
-            values = [WATER_MEANS[WATER_FEATURES.index(name)] for name in features]
+            # Raw sensor input remains three-dimensional even for variable ablations.
+            values = list(WATER_MEANS)
             water = images.new_tensor(values).unsqueeze(0).expand(images.shape[0], -1)
         self.last_water_shape = None if water is None else list(water.shape)
         return self.model(images, water=water)

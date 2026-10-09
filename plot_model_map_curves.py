@@ -7,6 +7,8 @@ Examples (run from the project root)::
         --models V0_visual M4_full yolov8n dfine_n rtdetrv2_s \
         --out figures/selected_models_map
 
+    python plot_model_map_curves.py --log baseline=illustrative_ap_curves/baseline_illustrative.csv --log dfine_n=illustrative_ap_curves/dfine_n_illustrative.csv --out figures/1
+
 The training log prefix ``test_`` in DETR/DEIM means evaluation during training,
 which uses the validation loader. Final test-set metrics are not epoch curves.
 """
@@ -141,6 +143,26 @@ def find_history(name: str, roots: list[Path]) -> History:
     return load_yolo_csv(path, name) if path.suffix == ".csv" else load_jsonl(path, name)
 
 
+def load_explicit_history(spec: str) -> History:
+    """Load NAME=PATH, or derive the model name from the log file stem."""
+    if "=" in spec:
+        name, filename = spec.split("=", 1)
+    else:
+        filename = spec
+        name = Path(filename).stem
+    if not name or not filename:
+        raise ValueError(f"Invalid --log {spec!r}; use NAME=PATH or PATH")
+    path = project_path(filename)
+    if not path.is_file():
+        raise FileNotFoundError(f"Log file does not exist: {path}")
+    suffix = path.suffix.lower()
+    if suffix == ".csv":
+        return load_yolo_csv(path, name)
+    if suffix == ".txt":
+        return load_jsonl(path, name)
+    raise ValueError(f"Unsupported log file {path}; expected .txt or .csv")
+
+
 def list_models(roots: list[Path]) -> None:
     for root in roots:
         print(f"{root}:")
@@ -215,23 +237,33 @@ def main() -> None:
     parser.add_argument("--ablation-root", help="Directory containing V*/M* model folders")
     parser.add_argument("--comparison-root", help="Directory containing YOLO/DEIM/DETR model folders")
     parser.add_argument("--models", nargs="+", help="Exact model folder names to overlay")
+    parser.add_argument("--log", action="append", default=[], metavar="[NAME=]PATH",
+                        help="Use a log file directly; repeat for each model. .txt is DEIM/DETR JSONL; .csv is YOLO.")
     parser.add_argument("--list-models", action="store_true", help="Show models with per-epoch logs and exit")
     parser.add_argument("--out", default="figures/model_map_comparison", help="Output path stem")
     args = parser.parse_args()
     roots = [project_path(value) for value in (args.ablation_root, args.comparison_root) if value]
-    if not roots:
-        parser.error("Provide --ablation-root and/or --comparison-root")
+    if not roots and not args.log:
+        parser.error("Provide --log files or --ablation-root/--comparison-root")
     for root in roots:
         if not root.is_dir():
             parser.error(f"Not a directory: {root}")
     if args.list_models:
+        if not roots:
+            parser.error("--list-models requires --ablation-root or --comparison-root")
         list_models(roots)
         return
-    if not args.models:
-        parser.error("Provide --models NAME [NAME ...] or use --list-models")
-    if len(args.models) != len(set(args.models)):
+    if args.models and not roots:
+        parser.error("--models requires --ablation-root or --comparison-root")
+    if not args.models and not args.log:
+        parser.error("Provide --models NAME [NAME ...] or --log [NAME=]PATH")
+    if args.models and len(args.models) != len(set(args.models)):
         parser.error("Duplicate names in --models")
-    histories = [find_history(name, roots) for name in args.models]
+    histories = [find_history(name, roots) for name in (args.models or [])]
+    histories.extend(load_explicit_history(spec) for spec in args.log)
+    names = [history.name for history in histories]
+    if len(names) != len(set(names)):
+        parser.error("Duplicate model names across --models and --log")
     for history in histories:
         print(f"{history.name}: epochs {history.points[0][0]}–{history.points[-1][0]}, "
               f"{len(history.points)} logged points, source={history.source}")

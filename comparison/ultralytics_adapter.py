@@ -13,10 +13,26 @@ def to_coco_detection(image_id, yolo_class, xyxy, score, mapping):
             "bbox": [x1, y1, x2 - x1, y2 - y1], "score": float(score)}
 
 
-def predict(checkpoint, ann_file, image_dir, output_json, device=None, imgsz=640):
+def load_model(checkpoint, config=None):
+    """Use supplied architecture with all trained parameters, or the saved model."""
     from ultralytics import YOLO
+    trained = YOLO(str(checkpoint))
+    if not config:
+        return trained
+    configured = YOLO(str(config))
+    try:
+        configured.model.load_state_dict(trained.model.state_dict(), strict=True)
+    except RuntimeError as exc:
+        raise ValueError(f'Supplied YOLO config {config} does not match checkpoint {checkpoint}: {exc}') from exc
+    configured.model.names = trained.model.names
+    configured.model.args = dict(trained.model.args)
+    configured.overrides.update(trained.overrides)
+    return configured
+
+
+def predict(checkpoint, ann_file, image_dir, output_json, device=None, imgsz=640, config=None):
     data, mapping = read_coco(ann_file)
-    model = YOLO(str(checkpoint))
+    model = load_model(checkpoint, config)
     model_names = {int(k): str(v).lower() for k, v in model.names.items()}
     if model_names != {0: "normal", 1: "hypoxia"}:
         raise ValueError(f"Checkpoint class names do not match comparison classes: {model_names}")

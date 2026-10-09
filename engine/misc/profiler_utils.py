@@ -25,7 +25,7 @@ class ModelForInfo(nn.Module):
     给 calflops 使用的包装模型。
 
     calflops 只会传入 images，
-    包装器负责额外构造 [B, 4] 的水质张量，
+    包装器负责额外构造 [B, 3] 的水质张量，
     从而让水质融合分支真正参与前向计算。
     """
 
@@ -92,17 +92,17 @@ class ModelForInfo(nn.Module):
         batch_size = images.shape[0]
 
         # 实际水质顺序：
-        # [temperature, do, ph, turbidity]
+        # [temperature, do, ph]
         #
         # 具体数值不会影响理论 MACs/FLOPs，
-        # 只要形状为 [B, 4] 并执行水质分支即可。
+        # 只要形状为 [B, 3] 并执行水质分支即可。
         water = images.new_tensor(
-            [25.0, 5.0, 7.0, 10.0]
+            [25.0, 5.0, 7.0]
         )
 
         water = water.reshape(
             1,
-            4
+            3
         ).repeat(
             batch_size,
             1

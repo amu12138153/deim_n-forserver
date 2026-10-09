@@ -1,4 +1,5 @@
 import torch
+import copy
 import torch.nn as nn
 
 from datetime import datetime
@@ -132,6 +133,9 @@ class BaseSolver(object):
         """State dict, train/eval"""
         state = {}
         state['date'] = datetime.now().isoformat()
+        # Future checkpoints carry their architecture and three-sensor statistics.
+        state['model_config'] = copy.deepcopy(self.cfg.yaml_cfg)
+        state['model_config'].pop('__include__', None)
 
         # For resume
         state['last_epoch'] = self.last_epoch

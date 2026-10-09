@@ -15,14 +15,21 @@ def convert(config, destination, image_limit=None, splits=("train", "val", "test
     splits = tuple(splits)
     mapping = assert_same_categories(config, splits)
     coco_to_yolo = {value: key for key, value in mapping.items()}
+    source_paths = {split: {"images": str(split_paths(config, split)[0]),
+                            "annotation": str(split_paths(config, split)[1])}
+                    for split in splits}
     if destination.exists() and any(destination.iterdir()):
         manifest = destination / "conversion_manifest.json"
         if manifest.is_file() and image_limit is None:
             old = json.loads(manifest.read_text(encoding="utf-8"))
             expected = {s: sha256(split_paths(config, s)[1]) for s in splits}
-            if old.get("annotation_sha256") == expected and old.get("category_mapping") == {str(k): v for k, v in mapping.items()}:
+            if (old.get("annotation_sha256") == expected
+                    and old.get("category_mapping") == {str(k): v for k, v in mapping.items()}
+                    and old.get("source_paths") == source_paths
+                    and (destination / "fish.yaml").is_file()):
                 return destination / "fish.yaml"
-        raise FileExistsError(f"Nonempty destination; refusing to overwrite: {destination}")
+        raise FileExistsError(f"Existing YOLO conversion does not match the selected dataset: {destination}. "
+                              "Choose a new --output-root (or conversion --out) to rebuild labels.")
     destination.mkdir(parents=True, exist_ok=True)
     checksums = {}
     counts = {}
@@ -80,7 +87,10 @@ def convert(config, destination, image_limit=None, splits=("train", "val", "test
     if "test" in splits:
         dataset_yaml["test"] = "images/test"
     fish_yaml.write_text(yaml.safe_dump(dataset_yaml, sort_keys=False), encoding="utf-8")
-    (destination / "conversion_manifest.json").write_text(json.dumps({"annotation_sha256": checksums, "category_mapping": mapping, "counts": counts, "image_limit": image_limit}, indent=2), encoding="utf-8")
+    (destination / "conversion_manifest.json").write_text(json.dumps({
+        "annotation_sha256": checksums, "category_mapping": mapping,
+        "source_paths": source_paths, "counts": counts, "image_limit": image_limit,
+    }, indent=2), encoding="utf-8")
     return fish_yaml
 
 

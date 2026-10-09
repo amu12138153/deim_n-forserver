@@ -49,9 +49,9 @@ LiteEncoder:
 
 
 DEIMTransformer:
-  water_features: [temperature, do, ph, turbidity]
-  water_means: [27.878, 4.547, 8.069, 0.125]
-  water_stds: [0.673, 1.939, 0.229, 0.914]
+  water_features: [temperature, do, ph]
+  water_means: [27.878, 4.547, 8.069]
+  water_stds: [0.673, 1.939, 0.229]
   water_self_attn: True
   query_water_cross_attn: True
   learnable_gate: True

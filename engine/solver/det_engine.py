@@ -119,6 +119,8 @@ def extract_water_quality(
             "同一个 batch 中水质向量长度不一致："
             f"{sorted(feature_lengths)}"
         )
+    if feature_lengths != {3}:
+        raise ValueError('Water batch must contain exactly temperature, do, ph: [B,3]')
 
     water_batch = torch.stack(
         water_values,

@@ -1,0 +1,9 @@
+__include__: [base.yml]
+experiment_name: A6_visual
+output_dir: ./outputs/water_innovations/A6_visual
+DEIMTransformer:
+  use_water_quality: False
+  water_features: []
+  water_self_attn: False
+  query_water_cross_attn: False
+  learnable_gate: False

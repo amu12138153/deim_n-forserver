@@ -1,0 +1,5 @@
+__include__: [base.yml]
+experiment_name: A1_rwa
+output_dir: ./outputs/water_innovations/A1_rwa
+DEIMTransformer:
+  use_rwa: True

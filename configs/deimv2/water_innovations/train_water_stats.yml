@@ -1,0 +1,5 @@
+# Training CSV sources: fish_dataset622\train\train.csv
+# Population std (ddof=0), floor=1e-6; temperature, do, ph.
+DEIMTransformer:
+  water_means: [27.208325892857143, 4.649107142857143, 7.9524107142857146]
+  water_stds: [0.45757182403529656, 2.4184282468059664, 0.1970065967700532]

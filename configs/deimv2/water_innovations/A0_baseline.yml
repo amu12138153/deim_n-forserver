@@ -1,0 +1,4 @@
+__include__: [base.yml]
+experiment_name: A0_baseline
+output_dir: ./outputs/water_innovations/A0_baseline
+# Traditional water self-attention + dense query-water attention + scalar residual.

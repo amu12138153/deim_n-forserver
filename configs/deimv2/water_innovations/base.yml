@@ -1,0 +1,33 @@
+__include__:
+  - ../fish_n_query_base.yml
+  - train_water_stats.yml
+
+HGNetv2:
+  use_water_quality: False
+
+DEIMTransformer:
+  use_water_quality: True
+  water_num_params: 3
+  water_features: [temperature, do, ph]
+  water_dim: 64
+  water_self_attn: True
+  query_water_cross_attn: True
+  learnable_gate: True
+  water_legacy_init_scale: 0.01
+  use_rwa: False
+  use_msqwca: False  # Compatibility switch name; now enables GSQWCA.
+  use_cqwg: False
+  water_debug: False
+  water_relation:
+    type: RankAwareWaterAttention
+    num_heads: 4
+    init_scale: 0.01
+    eps: 0.000001
+  query_water_fusion:
+    type: GlobalSparseQueryWaterCrossAttention
+    num_heads: 8
+    sparse_k: 2
+    dropout: 0.0
+  query_water_gate:
+    type: ComplementaryQueryWaterGate
+    init_scale: 0.01
